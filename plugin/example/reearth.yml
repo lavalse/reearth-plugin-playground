@@ -1,0 +1,41 @@
+id: reearth-plugin-red
+name: Red Plug-in
+version: 1.0.0
+extensions:
+  - id: red_text
+    type: widget
+    name: red_text
+    schema:
+      groups:
+        - id: default
+          fields:
+            - id: text
+              type: string
+              title: Red's text
+  - id: red_title
+    type: widget
+    name: red_title
+    schema:
+      groups:
+        - id: default
+          fields:
+            - id: text
+              type: string
+              title: red_title
+  - id: iss
+    type: widget
+    name: ISS Widget
+    widgetLayout:
+      extendable:
+        horizontally: true
+        vertically: true
+  - id: map
+    type: block
+    name: Map Block
+    schema:
+      groups:
+        - id: default
+          fields:
+            - id: location
+              type: latlng
+              title: Location
