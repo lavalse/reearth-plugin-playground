@@ -1,27 +1,7 @@
-id: reearth-plugin-red
-name: Red Plug-in
+id: reearth-plugin-example
+name: Example Plug-in
 version: 1.0.0
 extensions:
-  - id: red_text
-    type: widget
-    name: red_text
-    schema:
-      groups:
-        - id: default
-          fields:
-            - id: text
-              type: string
-              title: Red's text
-  - id: red_title
-    type: widget
-    name: red_title
-    schema:
-      groups:
-        - id: default
-          fields:
-            - id: text
-              type: string
-              title: red_title
   - id: iss
     type: widget
     name: ISS Widget
@@ -29,6 +9,16 @@ extensions:
       extendable:
         horizontally: true
         vertically: true
+  - id: text
+    type: widget
+    name: Text Widget
+    schema:
+      groups:
+        - id: default
+          fields:
+            - id: text
+              type: string
+              title: Text
   - id: map
     type: block
     name: Map Block
@@ -39,3 +29,16 @@ extensions:
             - id: location
               type: latlng
               title: Location
+  - id: estat-chart
+    type: block
+    name: e-stat
+    schema:
+      groups:
+        - id: default
+          fields:
+            - id: appId
+              type: string
+              title: App ID
+            - id: area
+              type: number
+              title: Area code

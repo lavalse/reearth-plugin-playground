@@ -9,6 +9,6 @@ extensions:
       groups:
         - id: default
           fields:
-            - id: text
-              type: string
-              title: Red's text
+            - id: image
+              type: url
+              title: image url

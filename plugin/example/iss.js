@@ -1,78 +1,116 @@
-const getText = () => reearth.widget.property && reearth.widget.property.default ? reearth.widget.property.default.text || "" : "";
 const html = `
-<div id="wrapper">
-<h1>Current ISS location</h1>
-<p>Latitude: <span id="lat">-</span></p>
-<p>Longitude: <span id="lon">-</span></p>
-<p>Altitude: <span id="alt">-</span>km</p>
-<p><button id="update">Update</button> <button id="jump">Jump!</button></p>
-</div>
 <style>
-  body {
-    margin: 0;
-    width: 300px;
-  }
-  body.extended {
-    width: 100%;
-    height: 100%;
-  }
+  body { margin: 0; }
+  .extendedh { width: 100%; }
+  .extendedv { height: 100%; }
   #wrapper {
     border: 2px solid blue;
     border-radius: 5px;
     background-color: rgba(111, 111, 111, 0.5);
     box-sizing: border-box;
+    width: 300px;
   }
-  body.extended #wrapper {
-    width: 100%;
-    height: 100%;
-  }
+  .extendedh body, .extendedh #wrapper { width: 100%; }
+  .extendedv body, .extendedv #wrapper { height: 100%; }
 </style>
+<div id="wrapper">
+  <h1>Current ISS location</h1>
+  <p>Latitude: <span id="lat">-</span></p>
+  <p>Longitude: <span id="lon">-</span></p>
+  <p>Altitude: <span id="alt">-</span>km</p>
+  <p>
+    <button id="update">Update</button>
+    <button id="jump">Jump</button>
+    <button id="follow">Follow</button>
+  </p>
+</div>
 <script>
   let lat, lng, alt;
+
   const update = () => {
-    fetch("https://api.wheretheiss.at/v1/satellites/25544").then(r => r.json()).then(data => {
+    return fetch("https://api.wheretheiss.at/v1/satellites/25544").then(r => r.json()).then(data => {
       lat = data.latitude;
       lng = data.longitude;
-      alt = data.altitude;
+      alt = data.altitude * 1000; // km -> m
       document.getElementById("lat").textContent = data.latitude;
       document.getElementById("lon").textContent = data.longitude;
       document.getElementById("alt").textContent = data.altitude;
     });
   };
-  document.getElementById("update").addEventListener("click", update);
-  document.getElementById("jump").addEventListener("click", () => {
-    if (lat === undefined) return;
+
+  const send = () => {
     parent.postMessage({ lat, lng, alt }, "*");
-  });
+  };
 
-  const extended = ${JSON.stringify(!!reearth.widget.extended)};
-  if (extended) {
-    document.body.classList.add("extended");
-  }
-  addEventListener("message", e => {
-    if (e.source !== parent) return;
-    if (e.extended) {
-      document.body.classList.add("extended");
+  document.getElementById("update").addEventListener("click", update);
+  document.getElementById("jump").addEventListener("click", send);
+
+  const updateExtended = e => {
+    if (e && e.horizontally) {
+      document.documentElement.classList.add("extendedh");
     } else {
-      document.body.classList.remove("extended");
+      document.documentElement.classList.remove("extendedh");
     }
+    if (e && e.vertically) {
+      document.documentElement.classList.add("extendedv");
+    } else {
+      document.documentElement.classList.remove("extendedv");
+    }
+  };
+
+  addEventListener("message", e => {
+    if (e.source !== parent || !e.data.extended) return;
+    updateExtended(e.data.extended);
   });
 
+  updateExtended(${JSON.stringify(reearth.widget.extended || null)});
   update();
+
+  let timer;
+  document.getElementById("follow").addEventListener("click", (e) => {
+    if (timer) {
+      clearTimeout(timer);
+      timer = undefined;
+      e.currentTarget.textContent = "Follow";
+      return;
+    }
+    const cb = () => update().then(() => {
+      send();
+      if (timer) timer = setTimeout(cb, 3000);
+    });
+    timer = 1;
+    cb();
+    e.currentTarget.textContent = "Unfollow";
+  });
 </script>
 `;
 
 reearth.ui.show(html);
+
 reearth.on("update", () => {
-  reearth.ui.postMessage({ extended: !!reearth.widget.extended });
+  reearth.ui.postMessage({
+    extended: reearth.widget.extended
+  });
 });
+
 reearth.on("message", msg => {
-  const flyTo = reearth.visualizer.flyTo ?? reearth.visualizer.camera.flyTo;
-  flyTo({
+  reearth.visualizer.camera.flyTo({
     lat: msg.lat,
     lng: msg.lng,
-    alt: msg.alt,
+    height: msg.alt + 1000,
+    heading: 0,
+    pitch: -Math.PI/2,
+    roll: 0,
   }, {
     duration: 2
   });
+  const layer = reearth.layers.find(l => l.type === "model" && l.title === "ISS");
+  if(layer){
+    reearth.layers.overrideProperty(layer.id, {
+      default: {
+      location: { lat:msg.lat, lng: msg.lng },
+      height: msg.alt
+      }
+    });
+  }
 });

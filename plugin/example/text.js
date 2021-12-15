@@ -1,16 +1,10 @@
 const getText = () => reearth.widget.property && reearth.widget.property.default ? reearth.widget.property.default.text || "" : "";
 const html = `
-<div id="wrapper">
 <h1 id="text"></h1>
-</div>
 <style>
   html, body {
-  }
-  #wrapper {
-    background-color: rgba(111, 111, 111, 0.5);
-    margin: -10px;
-    border: solid red;
-    width: 50px;
+    margin: 0;
+    background: transparent;
   }
 </style>
 <script>

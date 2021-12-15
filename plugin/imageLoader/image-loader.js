@@ -1,4 +1,3 @@
-const getText = () => reearth.widget.property && reearth.widget.property.default ? reearth.widget.property.default.text || "" : "";
 const html = `
 <div>
 <h1> image loader</h1>
@@ -6,18 +5,24 @@ const html = `
 </div>
 
 <script>
-  const changeImage = text => {
-    document.getElementById("myImage").src = text;
+  const cb = (widget) => {
+    console.log(widget.image);
+    document.getElementById("myImage").src=widget.image;
   };
   addEventListener("message", e => {
     if (e.source !== parent) return;
-    changeImage(e.data);
+    cb(e.data);
   });
-  changeImage(${JSON.stringify(getText())});
+  cb(${JSON.stringify(reearth.widget)});
 </script>
 `;
 
 reearth.ui.show(html);
-reearth.on("update", () => {
-  reearth.ui.postMessage(getText());
-});
+reearth.on("update", send);
+send();
+
+function send() {
+  if (reearth.widget?.property?.default) {
+    reearth.ui.postMessage(reearth.widget.property.default);
+  }
+}

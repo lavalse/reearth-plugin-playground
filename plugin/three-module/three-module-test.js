@@ -3,14 +3,13 @@ const html = `
   <div>
     <canvas class="webgl"></canvas>
   </div>
-  <img src="./face.png" alt="" srcset="">
   <div>
     <button id="button">this is a button</button>
   </div>
   <script type="module">
     import * as THREE from 'https://cdn.skypack.dev/three@0.135.0';
     import { OrbitControls } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/controls/OrbitControls.js';
-
+    import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/GLTFLoader.js';
 
     console.log(THREE);
     const sizes = {
@@ -26,6 +25,7 @@ const html = `
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas });
     renderer.setSize(sizes.width, sizes.height);
+    renderer.setClearColor( 0xffffff, 0);
     document.body.appendChild(renderer.domElement);
 
     const geometry = new THREE.BoxGeometry();
@@ -33,7 +33,12 @@ const html = `
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
 
-    camera.position.z = 2;
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(ambientLight);
+
+    const gltfLoader = new GLTFLoader();
+
+    camera.position.z = 8;
 
     const animate = function () {
       requestAnimationFrame(animate);
@@ -47,12 +52,35 @@ const html = `
     };
 
     animate();
+    
 
-    document.getElementById("button").addEventListener("click", function () {
-      console.log("click!");
-    })
-    console.log("hello");
+    const cb = (widget) => {
+      console.log(widget.image);
+      
+      gltfLoader.load(widget.image, (gltf) => {
+        console.log(gltf);
+        scene.add(gltf.scene)
+      })
+
+    };
+
+    addEventListener("message", e => {
+      if (e.source !== parent) return;
+      cb(e.data);
+    });
+    
+
+    cb(${JSON.stringify(reearth.widget)});
+
   </script>
 `;
 
 reearth.ui.show(html);
+reearth.on("update", send);
+send();
+
+function send() {
+  if (reearth.widget?.property?.default) {
+    reearth.ui.postMessage(reearth.widget.property.default);
+  }
+}
