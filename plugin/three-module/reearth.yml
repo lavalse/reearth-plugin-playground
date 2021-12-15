@@ -1,10 +1,10 @@
-id: three
-name: three playground
+id: three-module
+name: three module playground
 version: 1.0.0
 extensions:
-  - id: three-test
+  - id: three-module-test
     type: widget
-    name: three-test
+    name: three-module-test
     schema:
       groups:
         - id: default

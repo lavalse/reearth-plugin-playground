@@ -1,0 +1,23 @@
+id: cdn
+name: cdn test
+version: 1.0.0
+extensions:
+  - id: cdn-test
+    type: widget
+    name: cdn-test
+    schema:
+      groups:
+        - id: default
+          fields:
+            - id: endpoint
+              type: string
+              title: Endpoint
+            - id: apiKey
+              type: string
+              title: API Key
+            - id: areaId
+              type: string
+              title: Area ID
+            - id: dataFetchInterval
+              type: number
+              title: データ取得間隔
