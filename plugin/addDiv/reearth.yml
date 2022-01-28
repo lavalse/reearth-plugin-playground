@@ -1,0 +1,10 @@
+id: add-div
+name: add div
+version: 1.0.0
+extensions:
+  - id: add-div
+    type: block
+    name: add card
+    schema:
+      groups:
+        - id: default
