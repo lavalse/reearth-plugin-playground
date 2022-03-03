@@ -1,0 +1,17 @@
+id: onandoff
+name: On_and_Off
+version: 1.0.0
+extensions:
+  - id: window
+    type: widget
+    name: window
+    widgetLayout:
+      extendable:
+        vertically: true
+    schema:
+      groups:
+        - id: default
+          fields:
+            - id: text
+              type: string
+              title: Text

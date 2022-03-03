@@ -1,6 +1,6 @@
 id: add-div
 name: add div
-version: 1.0.0
+version: 2.0.4
 extensions:
   - id: add-div
     type: block
@@ -8,3 +8,19 @@ extensions:
     schema:
       groups:
         - id: default
+          fields:
+            - id: text
+              type: string
+              title: English Title
+            - id: text2
+              type: string
+              title: what ever
+            - id: text3
+              type: bool
+              title: what ever 2
+            - id: textc
+              type: string
+              title: what ever 4
+            - id: textk
+              type: number
+              title: what ever 5
